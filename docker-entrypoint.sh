@@ -60,6 +60,11 @@ if [ ! -f "/usr/share/zoneinfo/${TZ}" ]; then
 	exit 1
 fi
 
+if [ ! -f '/etc/alpine-release' ]; then
+	echo 'Not Found Alpine Release: /etc/alpine-release'
+	exit 1
+fi
+
 ##############################################################################
 # Set Timezone
 ##############################################################################
@@ -104,6 +109,14 @@ adduser -h '/home/abuilder' \
 	'abuilder'
 
 addgroup 'abuilder' 'abuild'
+
+##############################################################################
+# Repository
+##############################################################################
+
+if grep -Eqsv '^[0-9]+\.[0-9]+\.[0-9]+$' '/etc/alpine-release'; then
+	echo 'https://dl-cdn.alpinelinux.org/alpine/edge/testing' >> '/etc/apk/repositories'
+fi
 
 ##############################################################################
 # Initialization
