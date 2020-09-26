@@ -111,14 +111,6 @@ adduser -h '/home/abuilder' \
 adduser 'abuilder' 'abuild'
 
 ##############################################################################
-# Repository
-##############################################################################
-
-if grep -Eqsv '^[0-9]+\.[0-9]+\.[0-9]+$' '/etc/alpine-release'; then
-	echo 'https://dl-cdn.alpinelinux.org/alpine/edge/testing' >> '/etc/apk/repositories'
-fi
-
-##############################################################################
 # Initialization
 ##############################################################################
 
@@ -142,12 +134,22 @@ if [ ! -d '/home/abuilder' ]; then
 fi
 
 ##############################################################################
+# Repository
+##############################################################################
+
+if grep -Eqsv '^[0-9]+\.[0-9]+\.[0-9]+$' '/etc/alpine-release'; then
+	echo 'https://dl-cdn.alpinelinux.org/alpine/edge/testing' >> '/etc/apk/repositories'
+fi
+
+apk update
+
+##############################################################################
 # Running
 ##############################################################################
 
+cd '/home/abuilder/apkbuild'
+
 if [ "$1" = 'abuild' ]; then
-	apk update
-	cd '/home/abuilder/apkbuild'
 	exec su-exec 'abuilder' "$@"
 else
 	exec "$@"
