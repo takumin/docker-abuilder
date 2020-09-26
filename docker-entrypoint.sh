@@ -94,7 +94,7 @@ addgroup -g "${ABUILDER_GID}" 'abuilder'
 # Reset User
 ##############################################################################
 
-adduser -h '/nonexistent' \
+adduser -h '/home/abuilder' \
 	-g 'abuilder,,,' \
 	-s '/usr/sbin/nologin' \
 	-G 'abuilder' \
@@ -109,13 +109,26 @@ addgroup 'abuilder' 'abuild'
 # Initialization
 ##############################################################################
 
-echo '%abuilder ALL=(ALL:ALL) NOPASSWD: ALL' > /etc/sudoers.d/abuilder
+echo '%abuilder ALL=(ALL:ALL) NOPASSWD: ALL' > '/etc/sudoers.d/abuilder'
+
+if [ ! -d '/abuild' ]; then
+	mkdir -p '/abuild'
+	chown -R 'abuilder:abuilder' '/abuild'
+fi
+
+if [ ! -d '/home/abuilder' ]; then
+	mkdir -p '/home/abuilder'
+	ln -s '/abuild' '/home/abuilder/.abuild'
+	chown -R 'abuilder:abuilder' '/home/abuilder'
+fi
 
 ##############################################################################
 # Running
 ##############################################################################
 
 if [ "$1" = 'abuild' ]; then
+	apk update
+	cd '/home/abuilder'
 	exec su-exec 'abuilder:abuilder' "$@"
 else
 	exec "$@"

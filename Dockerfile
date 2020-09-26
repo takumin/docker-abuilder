@@ -16,9 +16,11 @@ RUN set -eu \
     su-exec \
     sudo \
     tzdata \
+ && mkdir /abuild \
  && echo 'Finish Build Container!'
 
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
+VOLUME ["/abuild"]
 ENTRYPOINT ["dumb-init", "--", "docker-entrypoint.sh"]
 CMD ["abuild", "-r"]
