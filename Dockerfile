@@ -17,10 +17,11 @@ RUN set -eu \
     sudo \
     tzdata \
  && mkdir /abuild \
+ && mkdir /apkbuild \
  && echo 'Finish Build Container!'
 
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
-VOLUME ["/abuild"]
+VOLUME ["/abuild", "/apkbuild"]
 ENTRYPOINT ["dumb-init", "--", "docker-entrypoint.sh"]
 CMD ["abuild", "-r"]

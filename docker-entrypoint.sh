@@ -101,14 +101,14 @@ addgroup -g "${ABUILDER_GID}" 'abuilder'
 
 adduser -h '/home/abuilder' \
 	-g 'abuilder,,,' \
-	-s '/usr/sbin/nologin' \
+	-s '/bin/sh' \
 	-G 'abuilder' \
 	-D \
 	-H \
 	-u "${ABUILDER_UID}" \
 	'abuilder'
 
-addgroup 'abuilder' 'abuild'
+adduser 'abuilder' 'abuild'
 
 ##############################################################################
 # Repository
@@ -129,9 +129,15 @@ if [ ! -d '/abuild' ]; then
 	chown -R 'abuilder:abuilder' '/abuild'
 fi
 
+if [ ! -d '/apkbuild' ]; then
+	mkdir -p '/apkbuild'
+	chown -R 'abuilder:abuilder' '/apkbuild'
+fi
+
 if [ ! -d '/home/abuilder' ]; then
 	mkdir -p '/home/abuilder'
 	ln -s '/abuild' '/home/abuilder/.abuild'
+	ln -s '/apkbuild' '/home/abuilder/apkbuild'
 	chown -R 'abuilder:abuilder' '/home/abuilder'
 fi
 
@@ -141,8 +147,8 @@ fi
 
 if [ "$1" = 'abuild' ]; then
 	apk update
-	cd '/home/abuilder'
-	exec su-exec 'abuilder:abuilder' "$@"
+	cd '/home/abuilder/apkbuild'
+	exec su-exec 'abuilder' "$@"
 else
 	exec "$@"
 fi
