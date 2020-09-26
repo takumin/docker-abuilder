@@ -10,6 +10,7 @@ RUN set -eu \
  && echo 'Start Build Container!' \
  && apk --no-cache --update add \
     alpine-sdk \
+    atools \
     ca-certificates \
     ccache \
     dumb-init \
